@@ -18,6 +18,11 @@ app.get("/", (req, res) => {
 	res.json({ message: "Welcome to trefis`s test." });
 });
 
+const db = require("./app/models");
+db.sequelize.sync({ force: true }).then(() => {
+	console.log("Drop and re-sync database.");
+});
+
 const PORT = process.env.POST || 8080;
 app.listen(PORT, () => {
 	console.log(`Server is runnung on port ${PORT}`);
