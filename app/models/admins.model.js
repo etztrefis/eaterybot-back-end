@@ -1,17 +1,21 @@
 const { sequelize, Sequelize } = require(".");
 
 module.exports = (sequelize, Sequelize) => {
-	const Admin = sequelize.define("Admin", {
-		login: {
-			type: Sequelize.STRING,
+	const Admin = sequelize.define(
+		"Admin",
+		{
+			Login: {
+				type: Sequelize.STRING,
+			},
+			Password: {
+				type: Sequelize.STRING,
+			},
+			Availiable: {
+				type: Sequelize.BOOLEAN,
+			},
 		},
-		password: {
-			type: Sequelize.STRING,
-		},
-		availialbe: {
-			type: Sequelize.BOOLEAN,
-		},
-	});
+		{ timestamps: false }
+	);
 
 	return Admin;
 };
