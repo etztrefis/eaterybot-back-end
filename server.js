@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const adminController = require("./app/controller/admins.controller");
+const codesController = require("./app/controller/codes.controller");
 
 const app = express();
 
@@ -24,9 +25,11 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/api/admins/", adminController.findAll);
-app.get("/api/admins/:username", adminController.findOne);
-
+app.get("/api/admins/:username", adminController.findAll);
 app.get("/api/admins/create/:username/:password", adminController.create);
+
+app.get("/api/codes/:code", codesController.findAll);
+app.get("/api/codes/", codesController.findAllCodes);
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {
