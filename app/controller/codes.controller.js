@@ -4,7 +4,9 @@ const Op = db.Sequelize.Op;
 // Retrieve all codes from the database.
 exports.findAll = async (req, res) => {
 	await db.codes
-		.findAll({ where: { Code: { [Op.eq]: req.params.code } } })
+		.findAll({
+			where: { Code: { [Op.eq]: req.params.code }, Available: true },
+		})
 		.then((getCode) => {
 			if (getCode == "") {
 				res.sendStatus(404);
