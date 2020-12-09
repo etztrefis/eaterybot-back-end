@@ -1,20 +1,33 @@
 const db = require("../models");
+const jwt = require("jsonwebtoken");
+require("dotenv").config({ path: "../../.env" });
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Admin
 exports.create = async (req, res) => {
-	await db.admins
-		.create({
-			Login: req.params.username,
-			Password: req.params.password,
-			Availialbe: true,
-		})
-		.then(() => {
-			res.sendStatus(200);
-		})
-		.catch(() => {
-			res.sendStatus(404);
+	const authHeader = req.headers.authorization;
+	if (authHeader) {
+		const token = authHeader.split(" ")[1];
+
+		jwt.verify(token, process.env.TOKEN, async (err) => {
+			if (err) {
+				return res.sendStatus(403);
+			} else {
+				await db.admins
+					.create({
+						Login: req.params.username,
+						Password: req.params.password,
+						Availialbe: true,
+					})
+					.then(() => {
+						return res.sendStatus(200);
+					})
+					.catch(() => {
+						return res.sendStatus(404);
+					});
+			}
 		});
+	}
 };
 
 // Retrieve all Admins from the database.
