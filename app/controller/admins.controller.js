@@ -14,13 +14,26 @@ exports.create = async (req, res) => {
 				return res.sendStatus(403);
 			} else {
 				await db.admins
-					.create({
-						Login: req.params.username,
-						Password: req.params.password,
-						Availialbe: true,
+					.findAll({
+						where: { Login: { [Op.eq]: req.params.username } },
 					})
-					.then(() => {
-						return res.sendStatus(200);
+					.then(async (value) => {
+						if (value == "") {
+							await db.admins
+								.create({
+									Login: req.params.username,
+									Password: req.params.password,
+									Availialbe: true,
+								})
+								.then(() => {
+									return res.sendStatus(200);
+								})
+								.catch(() => {
+									return res.sendStatus(404);
+								});
+						} else {
+							return res.json({ message: "Already exists." });
+						}
 					})
 					.catch(() => {
 						return res.sendStatus(404);
