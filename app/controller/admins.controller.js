@@ -50,12 +50,25 @@ exports.findAll = async (req, res) => {
 	});
 };
 
-// Find a single Admin with an username
+// Find a single Admin with indicated username and password
 exports.findOne = async (req, res) => {
 	await db.admins
-		.findOne({ where: { Login: { [Op.eq]: req.params.username } } })
+		.findOne({
+			where: {
+				Login: { [Op.eq]: req.params.username },
+				Password: { [Op.eq]: req.params.password },
+				Availiable: { [Op.eq]: true },
+			},
+		})
 		.then((getAdmin) => {
-			res.json(getAdmin);
+			if (getAdmin == "") {
+				res.sendStatus(404);
+			} else {
+				res.sendStatus(200);
+			}
+		})
+		.catch(() => {
+			res.sendStatus(404);
 		});
 };
 
