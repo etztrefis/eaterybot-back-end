@@ -61,10 +61,10 @@ exports.findOne = async (req, res) => {
 			},
 		})
 		.then((getAdmin) => {
-			if (getAdmin == "") {
+			if (getAdmin == null) {
 				res.sendStatus(404);
 			} else {
-				res.sendStatus(200);
+				res.json(Math.floor(Math.random() * 16777215).toString(16));
 			}
 		})
 		.catch(() => {
