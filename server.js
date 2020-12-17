@@ -26,7 +26,7 @@ app.get("/api", (req, res) => {
 
 app.get("/api/admins/", adminController.findAll);
 app.get("/api/admins/:username/:password", adminController.findOne);
-app.get("/api/admins/create/:username/:password", adminController.create);
+app.get("/api/admins/create/:username/:password/:code", adminController.create);
 
 app.get("/api/codes/:code", codesController.findAll);
 app.get("/api/codes/", codesController.findAllCodes);
