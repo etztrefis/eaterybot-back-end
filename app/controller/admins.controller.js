@@ -25,7 +25,11 @@ exports.create = async (req, res) => {
 									Password: req.params.password,
 									Availialbe: true,
 								})
-								.then(() => {
+								.then(async () => {
+									await db.codes.update(
+										{ Available: false },
+										{ where: { Code: req.params.code } }
+									);
 									return res.sendStatus(200);
 								})
 								.catch(() => {
