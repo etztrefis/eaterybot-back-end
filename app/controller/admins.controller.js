@@ -1,5 +1,6 @@
 const db = require("../models");
 const jwt = require("jsonwebtoken");
+const cryptoJS = require("crypto-js");
 require("dotenv").config({ path: "../../.env" });
 const Op = db.Sequelize.Op;
 
@@ -60,7 +61,6 @@ exports.findOne = async (req, res) => {
 		.findOne({
 			where: {
 				Login: { [Op.eq]: req.params.username },
-				Password: { [Op.eq]: req.params.password },
 				Availiable: { [Op.eq]: true },
 			},
 		})
@@ -68,7 +68,27 @@ exports.findOne = async (req, res) => {
 			if (getAdmin == null) {
 				res.sendStatus(404);
 			} else {
-				res.json(Math.floor(Math.random() * 16777215).toString(16));
+				const responseBytes = cryptoJS.AES.decrypt(
+					req.params.password,
+					process.env.REACT_APP_CRYPT
+				);
+				const databadeBytes = cryptoJS.AES.decrypt(
+					getAdmin["Password"],
+					process.env.REACT_APP_CRYPT
+				);
+
+				const originalResponse = responseBytes.toString(
+					cryptoJS.enc.Utf8
+				);
+				const originalDataBase = databadeBytes.toString(
+					cryptoJS.enc.Utf8
+				);
+
+				if (originalResponse === originalDataBase) {
+					res.json(Math.floor(Math.random() * 16777215).toString(16));
+				} else {
+					res.sendStaus(404);
+				}
 			}
 		})
 		.catch(() => {
