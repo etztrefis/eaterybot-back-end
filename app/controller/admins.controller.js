@@ -87,11 +87,12 @@ exports.findOne = async (req, res) => {
 				if (originalResponse === originalDataBase) {
 					res.json(Math.floor(Math.random() * 16777215).toString(16));
 				} else {
-					res.sendStaus(404);
+					res.sendStatus(404);
 				}
 			}
 		})
-		.catch(() => {
+		.catch((e) => {
+			 console.log(e);
 			res.sendStatus(404);
 		});
 };
