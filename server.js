@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api", (req, res) => {
-	res.json("redirect test");
+	res.status(200).send({ type: "OK", message: "API endpoint" });
 });
 
 app.get("/api/admins/", adminController.findAll);
