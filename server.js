@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const adminController = require("./app/controller/admins.controller");
 const codesController = require("./app/controller/codes.controller");
+const productsConrtoller = require("./app/controller/products.controller");
 
 const app = express();
 
@@ -31,6 +32,9 @@ app.get("/api/admins/create/:username/:password/:code", adminController.create);
 
 app.get("/api/codes/:code", codesController.findAll);
 app.get("/api/codes/", codesController.findAllCodes);
+
+app.get("/api/products/", productsConrtoller.findAll);
+app.get("/api/products/:name/:amount/:units", productsConrtoller.findAll);
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {
