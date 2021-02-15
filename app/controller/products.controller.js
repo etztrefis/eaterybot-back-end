@@ -1,20 +1,78 @@
 const db = require("../models");
 const Op = db.Sequelize.Op;
+const jwt = require("jsonwebtoken");
+const cryptoJS = require("crypto-js");
+require("dotenv").config({ path: "../../.env" });
 
-// Retrieve all codes from the database.
+// Retrieve all products from the database.
 exports.findAll = async (req, res) => {
-    await db.products
-        .findAll()
-        .then((getProducts) => {
-            res.status(200).send({type:"OK", message: getProducts})
-        })
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.TOKEN, async (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(403).send({ type: "Error", message: "Invalid token" })
+      } else {
+        await db.products
+          .findAll()
+          .then((getProducts) => {
+            res.status(200).send({ type: "OK", message: getProducts })
+          });
+      }
+    });
+  } else {
+    return res.status(403).send({ type: "Error", message: "Authorization token required" })
+  }
 };
 
-// Create and Save a new Admin
-exports.create = async (req, res) => {};
-
-// Update a code by the id in the request
-exports.update = (req, res) => {};
+// Create and Save a new product
+exports.create = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.TOKEN, async (err) => {
+      if (err) {
+        return res.status(403).send({ type: "error", message: "Invalid token" })
+      } else {
+        await db.products
+          .findAll({
+            where: { Name: { [Op.eq]: req.params.name } },
+          })
+          .then(async (value) => {
+            if (value == "") {
+              let units;
+              if (req.params.units == 1) {
+                units = "кг.";
+              } else if (req.params.units == 2) {
+                units = "шт."
+              } else if (req.params.units == 3) {
+                units = "литр."
+              } else {
+                units = "кг.";
+              }
+              await db.products
+                .create({
+                  Name: req.params.name,
+                  Amount: req.params.amount,
+                  MeasurmentUnits: units,
+                })
+                .then(async () => {
+                  return res.status(200).send({ type: "OK", message: "Successfully created" });
+                })
+            } else {
+              return res.status(404).send({ message: "Already exists." });
+            }
+          })
+          .catch(() => {
+            return res.status(404).send({ type: "Error", message: "Error while admin searching" });
+          });
+      }
+    });
+  } else {
+    return res.status(403).send({ type: "Error", message: "Authorization token required" })
+  }
+};
 
 // Delete a code with the specified id in the request
-exports.delete = (req, res) => {};
+exports.delete = (req, res) => {  };
