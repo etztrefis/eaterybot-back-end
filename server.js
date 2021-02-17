@@ -36,6 +36,7 @@ app.get("/api/codes/", codesController.findAllCodes);
 app.get("/api/products/", productsConrtoller.findAll);
 app.get("/api/products/create/:name/:amount/:units", productsConrtoller.create);
 app.get("/api/products/delete/:id", productsConrtoller.delete);
+app.get("/api/products/update/:id/:name/:amount/:units", productsConrtoller.update);
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {

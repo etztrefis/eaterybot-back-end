@@ -40,31 +40,26 @@ exports.create = async (req, res) => {
             where: { Name: { [Op.eq]: req.params.name } },
           })
           .then(async (value) => {
-            if (value == "") {
-              let units;
-              if (req.params.units == 1) {
-                units = "кг.";
-              } else if (req.params.units == 2) {
-                units = "шт."
-              } else if (req.params.units == 3) {
-                units = "литр."
-              } else {
-                units = "кг.";
-              }
+            if (value.toString() === "") {
               await db.products
                 .create({
                   Name: req.params.name,
                   Amount: req.params.amount,
-                  MeasurmentUnits: units,
+                  MeasurmentUnits: req.params.units,
                 })
-                .then(async () => {
+                .then(() => {
                   return res.status(200).send({ type: "OK", message: "Successfully created" });
+                })
+                .catch((e) => {
+                  console.log(e);
+                  return res.status(404).send({ type: "Error", message: "Error while admin creating" });
                 })
             } else {
               return res.status(404).send({ type: "Error", message: "Already exists." });
             }
           })
-          .catch(() => {
+          .catch((e) => {
+            console.log(e)
             return res.status(404).send({ type: "Error", message: "Error while admin searching" });
           });
       }
@@ -100,6 +95,42 @@ exports.delete = (req, res) => {
                 })
             }
           })
+      }
+    });
+  } else {
+    return res.status(403).send({ type: "Error", message: "Authorization token required" })
+  }
+};
+
+exports.update = (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.TOKEN, async (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(403).send({ type: "Error", message: "Invalid token" })
+      } else {
+        let respID = parseInt(req.params.id, 10);
+        await db.products.findOne({ where: { ProductID: { [Op.eq]: respID } } })
+          .then((project) => {
+            if (project) {
+              project.update({
+                Name: req.params.name,
+                Amount: req.params.amount,
+                MeasurmentUnits: req.params.units,
+              })
+              .then(() => {
+                res.status(200).send({ type: "OK", message: "Successfully updated" })
+              })
+              .catch((e) => {
+                console.log(e);
+                res.status(403).send({ type: "OK", message: "Error while updating" })
+              })
+            } else {
+              res.status(403).send({ type: "OK", message: "Error while searching" })
+            }
+          });
       }
     });
   } else {
