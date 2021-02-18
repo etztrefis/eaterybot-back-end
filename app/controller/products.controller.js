@@ -1,8 +1,29 @@
 const db = require("../models");
 const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
-const cryptoJS = require("crypto-js");
 require("dotenv").config({ path: "../../.env" });
+
+// Retrieve all products from the database where amount =< 10
+exports.findAllLess = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.TOKEN, async (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(403).send({ type: "Error", message: "Invalid token" })
+      } else {
+        await db.products
+          .findAll({ where: { Amount: { [Op.lte]: 10 } } })
+          .then((getProducts) => {
+            res.status(200).send({ type: "OK", message: getProducts })
+          });
+      }
+    });
+  } else {
+    return res.status(403).send({ type: "Error", message: "Authorization token required" })
+  }
+};
 
 // Retrieve all products from the database.
 exports.findAll = async (req, res) => {
@@ -102,6 +123,7 @@ exports.delete = (req, res) => {
   }
 };
 
+//Update specified product
 exports.update = (req, res) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
@@ -120,13 +142,13 @@ exports.update = (req, res) => {
                 Amount: req.params.amount,
                 MeasurmentUnits: req.params.units,
               })
-              .then(() => {
-                res.status(200).send({ type: "OK", message: "Successfully updated" })
-              })
-              .catch((e) => {
-                console.log(e);
-                res.status(403).send({ type: "OK", message: "Error while updating" })
-              })
+                .then(() => {
+                  res.status(200).send({ type: "OK", message: "Successfully updated" })
+                })
+                .catch((e) => {
+                  console.log(e);
+                  res.status(403).send({ type: "OK", message: "Error while updating" })
+                })
             } else {
               res.status(403).send({ type: "OK", message: "Error while searching" })
             }
