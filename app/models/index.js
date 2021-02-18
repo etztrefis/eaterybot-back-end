@@ -25,4 +25,8 @@ db.codes = require("./codes.model.js")(sequelize, Sequelize);
 
 db.products = require("./products.model")(sequelize, Sequelize);
 
+db.dishes = require("./dishes.model")(sequelize, Sequelize);
+
+db.compositions = require("./compositions.model")(sequelize, Sequelize);
+
 module.exports = db;
