@@ -10,9 +10,9 @@ module.exports = (sequelize, Sequelize) => {
 			},
 			ProductID: {
 				type: Sequelize.STRING,
-                primaryKey: true,
+				primaryKey: true,
 			},
-			Amountproduct: {
+			AmountProduct: {
 				type: Sequelize.DOUBLE,
 			},
 		},
