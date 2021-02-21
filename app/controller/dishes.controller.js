@@ -54,7 +54,7 @@ exports.create = async (req, res) => {
                                 })
                                 .catch((e) => {
                                     console.log(e);
-                                    return res.status(404).send({ type: "Error", message: "Error while admin creating" });
+                                    return res.status(404).send({ type: "Error", message: "Error while dish creating" });
                                 })
                         } else {
                             return res.status(404).send({ type: "Error", message: "Already exists." });
@@ -62,7 +62,7 @@ exports.create = async (req, res) => {
                     })
                     .catch((e) => {
                         console.log(e)
-                        return res.status(404).send({ type: "Error", message: "Error while admin searching" });
+                        return res.status(404).send({ type: "Error", message: "Error while dish searching" });
                     });
             }
         });
