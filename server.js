@@ -47,9 +47,9 @@ app.get("/api/dishes/delete/:id", dishesController.delete);
 app.get("/api/dishes/update/:id/:name/:energy/:price", dishesController.update);
 
 app.get("/api/compositions/", compositionsController.findAll);
-// app.get("/api/compositions/create/:did/:pid/:amount/", compositionsController.create);
-// app.get("/api/compositions/delete/:did/:pid", compositionsController.delete);
-// app.get("/api/compositions/update/:did/:pid/:amount/", compositionsController.update);
+app.get("/api/compositions/create/:did/:pname/:amount/", compositionsController.create);
+app.get("/api/compositions/delete/:did/:pname", compositionsController.delete);
+app.get("/api/compositions/update/:did/:pname/:amount/", compositionsController.update);
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {
