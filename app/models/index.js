@@ -29,4 +29,6 @@ db.dishes = require("./dishes.model")(sequelize, Sequelize);
 
 db.compositions = require("./compositions.model")(sequelize, Sequelize);
 
+db.menu = require("./menu.model")(sequelize, Sequelize);
+
 module.exports = db;

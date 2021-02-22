@@ -1,11 +1,12 @@
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors");
+const menuController = require("./app/controller/menu.controller");
 const adminController = require("./app/controller/admins.controller");
 const codesController = require("./app/controller/codes.controller");
-const productsConrtoller = require("./app/controller/products.controller");
 const dishesController = require("./app/controller/dishes.controller");
+const productsConrtoller = require("./app/controller/products.controller");
 const compositionsController = require("./app/controller/compositions.controller");
 
 const app = express();
@@ -50,6 +51,8 @@ app.get("/api/compositions/", compositionsController.findAll);
 app.get("/api/compositions/create/:did/:pname/:amount/", compositionsController.create);
 app.get("/api/compositions/delete/:did/:pname", compositionsController.delete);
 app.get("/api/compositions/update/:did/:pname/:amount/", compositionsController.update);
+
+app.get("/api/menu/", menuController.findAll);
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {
