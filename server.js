@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const menuController = require("./app/controller/menu.controller");
 const adminController = require("./app/controller/admins.controller");
 const codesController = require("./app/controller/codes.controller");
+const ordersController = require("./app/controller/orders.controller");
 const dishesController = require("./app/controller/dishes.controller");
 const productsConrtoller = require("./app/controller/products.controller");
 const compositionsController = require("./app/controller/compositions.controller");
@@ -53,6 +54,12 @@ app.get("/api/compositions/delete/:did/:pname", compositionsController.delete);
 app.get("/api/compositions/update/:did/:pname/:amount/", compositionsController.update);
 
 app.get("/api/menu/", menuController.findAll);
+app.get("/api/menu/create/:dayofweek/:dishid/", menuController.create);
+app.get("/api/menu/delete/:dayofweek/:dishid", menuController.delete);
+app.get("/api/menu/products", menuController.findAllProducts)
+
+app.get("/api/orders/", ordersController.findAll);
+app.get("/api/orders/update/:id/:state", ordersController.update);
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {
