@@ -40,8 +40,8 @@ exports.create = async (req, res) => {
                     })
                     .then(async (value) => {
                         if (value.toString() === "") {
-                            let energy = parseFloat(req.params.energy, 10);
-                            let price = parseFloat(req.params.price, 10);
+                            let energy = parseFloat(req.params.energy);
+                            let price = parseFloat(req.params.price);
                             await db.dishes
                                 .create({
                                     DishID: req.params.id,

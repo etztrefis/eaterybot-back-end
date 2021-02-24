@@ -32,7 +32,7 @@ exports.findAll = async (req, res) => {
 								value.DayOfWeek = "Пятница"
 							}
 						}
-						res.status(200).send({ type: "OK", message: getProducts })
+						res.status(200).send({ type: "OK", message: getProducts[0] })
 					})
 					.catch((e) => {
 						console.log(e);
@@ -54,20 +54,18 @@ exports.create = async (req, res) => {
 			if (err) {
 				return res.status(403).send({ type: "error", message: "Invalid token" })
 			} else {
-				await db.dishes
+				let dayofweek = parseInt(req.params.dayofweek, 10);
+				let dishid = parseInt(req.params.dishid, 10);
+				await db.menu
 					.findAll({
-						where: { Name: { [Op.eq]: req.params.name } },
+						where: { DayOfWeek: { [Op.eq]: dayofweek }, DishID: { [Op.eq]: dishid } },
 					})
 					.then(async (value) => {
 						if (value.toString() === "") {
-							let energy = parseFloat(req.params.energy, 10);
-							let price = parseFloat(req.params.price, 10);
-							await db.dishes
+							await db.menu
 								.create({
-									DishID: req.params.id,
-									Name: req.params.name,
-									EnergyValue: energy,
-									Price: price,
+									DayOfWeek: dayofweek,
+									DishID: dishid
 								})
 								.then(() => {
 									return res.status(200).send({ type: "OK", message: "Successfully created" });
@@ -82,7 +80,7 @@ exports.create = async (req, res) => {
 					})
 					.catch((e) => {
 						console.log(e)
-						return res.status(404).send({ type: "Error", message: "Error while dish searching" });
+						return res.status(404).send({ type: "Error", message: "Error while searching" });
 					});
 			}
 		});
@@ -101,22 +99,27 @@ exports.delete = (req, res) => {
 				console.log(err);
 				return res.status(403).send({ type: "Error", message: "Invalid token" })
 			} else {
-				let dishID = parseInt(req.params.id, 10);
-				await db.dishes.findOne({ where: { DishID: { [Op.eq]: dishID } } })
-					.then(async (getDish) => {
-						if (getDish == null) {
-							res.status(403).send({ type: "Error", message: "Product doesn't exists" })
+				let dayofweek = parseInt(req.params.dayofweek, 10);
+				let dishid = parseInt(req.params.dishid, 10);
+				await db.menu.findAll({ where: { DayOfWeek: { [Op.eq]: dayofweek }, DishID: { [Op.eq]: dishid } } })
+					.then(async (getMenu) => {
+						if (getMenu == null) {
+							res.status(403).send({ type: "Error", message: "Menu doesn't exists" })
 						} else {
-							await db.dishes
-								.destroy({ where: { DishID: { [Op.eq]: dishID } } })
+							await db.menu
+								.destroy({ where: { DayOfWeek: { [Op.eq]: dayofweek }, DishID: { [Op.eq]: dishid } } })
 								.then(() => {
 									res.status(200).send({ type: "OK", message: "Successfully deleted" })
 								})
 								.catch((e) => {
-									res.status(404).send({ type: "Error", message: "Eror while deleting", stack: e })
+									res.status(403).send({ type: "Error", message: "Eror while deleting", stack: e })
 								})
 						}
 					})
+					.catch(e => {
+						console.log(e);
+						res.status(403).send({ type: "Error", message: "Error while searching" });
+					});
 			}
 		});
 	} else {
@@ -124,8 +127,7 @@ exports.delete = (req, res) => {
 	}
 };
 
-//Update specified dish
-exports.update = (req, res) => {
+exports.findAllProducts = (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
 		const token = authHeader.split(" ")[1];
@@ -134,32 +136,21 @@ exports.update = (req, res) => {
 				console.log(err);
 				return res.status(403).send({ type: "Error", message: "Invalid token" })
 			} else {
-				let dishID = parseInt(req.params.id, 10);
-				let energy = parseFloat(req.params.energy);
-				let price = parseFloat(req.params.price);
-				await db.dishes.findOne({ where: { DishID: { [Op.eq]: dishID } } })
-					.then((project) => {
-						if (project) {
-							project.update({
-								Name: req.params.name,
-								EnergyValue: energy,
-								Price: price,
-							}, {
-								where: {
-									DishID: null
-								}
-							})
-								.then(() => {
-									res.status(200).send({ type: "OK", message: "Successfully updated" })
-								})
-								.catch((e) => {
-									console.log(e);
-									res.status(403).send({ type: "OK", message: "Error while updating" })
-								})
-						} else {
-							res.status(403).send({ type: "OK", message: "Error while searching" })
+				await db.products
+					.findAll()
+					.then((getProducts) => {
+						let obj = {};
+						let i = 1;
+						for (const product in getProducts) {
+							obj[i] = getProducts[product].Name;
+							i++;
 						}
-					});
+						res.status(200).send({ type: "OK", message: obj })
+					})
+					.catch((e) => {
+						console.log(e);
+						return res.status(403).send({ type: "Error", message: "Error while fetching" })
+					})
 			}
 		});
 	} else {
