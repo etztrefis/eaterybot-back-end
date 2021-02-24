@@ -13,7 +13,7 @@ module.exports = (sequelize, Sequelize) => {
 				primaryKey: true,
 			},
 		},
-		{ timestamps: false }
+		{ timestamps: false, freezeTableName: true , modelName: 'Menu' }
 	);
 
 	return Menu;

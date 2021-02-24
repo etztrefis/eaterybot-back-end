@@ -31,4 +31,6 @@ db.compositions = require("./compositions.model")(sequelize, Sequelize);
 
 db.menu = require("./menu.model")(sequelize, Sequelize);
 
+db.orders = require("./orders.model")(sequelize, Sequelize);
+
 module.exports = db;
