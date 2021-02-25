@@ -54,9 +54,10 @@ app.get("/api/compositions/delete/:did/:pname", compositionsController.delete);
 app.get("/api/compositions/update/:did/:pname/:amount/", compositionsController.update);
 
 app.get("/api/menu/", menuController.findAll);
+app.get("/api/menu/destroy", menuController.destroyAll);
 app.get("/api/menu/create/:dayofweek/:dishid/", menuController.create);
 app.get("/api/menu/delete/:dayofweek/:dishid", menuController.delete);
-app.get("/api/menu/products", menuController.findAllProducts)
+app.get("/api/menu/dishes", menuController.findAllProducts)
 
 app.get("/api/orders/", ordersController.findAll);
 app.get("/api/orders/update/:id/:state", ordersController.update);

@@ -54,34 +54,49 @@ exports.create = async (req, res) => {
 			if (err) {
 				return res.status(403).send({ type: "error", message: "Invalid token" })
 			} else {
-				let dayofweek = parseInt(req.params.dayofweek, 10);
-				let dishid = parseInt(req.params.dishid, 10);
-				await db.menu
-					.findAll({
-						where: { DayOfWeek: { [Op.eq]: dayofweek }, DishID: { [Op.eq]: dishid } },
+				let dayOfWeek;
+				if (req.params.dayofweek == "Понедельник") {
+					dayOfWeek = 1
+				} else if (req.params.dayofweek == "Вторник") {
+					dayOfWeek = 2
+				} else if (req.params.dayofweek == "Среда") {
+					dayOfWeek = 3
+				} else if (req.params.dayofweek == "Четверг") {
+					dayOfWeek = 4
+				} else if (req.params.dayofweek == "Пятница") {
+					dayOfWeek = 5
+				}
+
+				await db.dishes.findOne({ where: { Name: { [Op.eq]: req.params.dishid } } })
+					.then(async (getDish) => {
+						await db.menu
+							.findAll({
+								where: { DayOfWeek: { [Op.eq]: dayOfWeek }, DishID: { [Op.eq]: getDish.DishID } },
+							})
+							.then(async (value) => {
+								if (value.toString() === "") {
+									await db.menu
+										.create({
+											DayOfWeek: dayOfWeek,
+											DishID: getDish.DishID
+										})
+										.then(() => {
+											return res.status(200).send({ type: "OK", message: "Successfully created" });
+										})
+										.catch((e) => {
+											console.log(e);
+											return res.status(404).send({ type: "Error", message: "Error while dish creating" });
+										})
+								} else {
+									return res.status(404).send({ type: "Error", message: "Already exists." });
+								}
+							})
+							.catch((e) => {
+								console.log(e)
+								return res.status(404).send({ type: "Error", message: "Error while searching" });
+							});
 					})
-					.then(async (value) => {
-						if (value.toString() === "") {
-							await db.menu
-								.create({
-									DayOfWeek: dayofweek,
-									DishID: dishid
-								})
-								.then(() => {
-									return res.status(200).send({ type: "OK", message: "Successfully created" });
-								})
-								.catch((e) => {
-									console.log(e);
-									return res.status(404).send({ type: "Error", message: "Error while dish creating" });
-								})
-						} else {
-							return res.status(404).send({ type: "Error", message: "Already exists." });
-						}
-					})
-					.catch((e) => {
-						console.log(e)
-						return res.status(404).send({ type: "Error", message: "Error while searching" });
-					});
+
 			}
 		});
 	} else {
@@ -89,7 +104,7 @@ exports.create = async (req, res) => {
 	}
 };
 
-// Delete a dish with the specified id in the request
+// Delete a menu row with the specified id in the request
 exports.delete = (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
@@ -99,27 +114,48 @@ exports.delete = (req, res) => {
 				console.log(err);
 				return res.status(403).send({ type: "Error", message: "Invalid token" })
 			} else {
-				let dayofweek = parseInt(req.params.dayofweek, 10);
-				let dishid = parseInt(req.params.dishid, 10);
-				await db.menu.findAll({ where: { DayOfWeek: { [Op.eq]: dayofweek }, DishID: { [Op.eq]: dishid } } })
-					.then(async (getMenu) => {
-						if (getMenu == null) {
-							res.status(403).send({ type: "Error", message: "Menu doesn't exists" })
-						} else {
-							await db.menu
-								.destroy({ where: { DayOfWeek: { [Op.eq]: dayofweek }, DishID: { [Op.eq]: dishid } } })
-								.then(() => {
-									res.status(200).send({ type: "OK", message: "Successfully deleted" })
-								})
-								.catch((e) => {
-									res.status(403).send({ type: "Error", message: "Eror while deleting", stack: e })
-								})
-						}
+
+				let dayOfWeek;
+				if (req.params.dayofweek == "Понедельник") {
+					dayOfWeek = 1
+				} else if (req.params.dayofweek == "Вторник") {
+					dayOfWeek = 2
+				} else if (req.params.dayofweek == "Среда") {
+					dayOfWeek = 3
+				} else if (req.params.dayofweek == "Четверг") {
+					dayOfWeek = 4
+				} else if (req.params.dayofweek == "Пятница") {
+					dayOfWeek = 5
+				}
+
+				await db.dishes.findOne({ where: { Name: { [Op.eq]: req.params.dishid } } })
+					.then(async (getDish) => {
+						await db.menu
+							.findOne({
+								where: { DayOfWeek: { [Op.eq]: dayOfWeek }, DishID: { [Op.eq]: getDish.DishID } },
+							})
+							.then(async getDishID => {
+								await db.menu.findAll({ where: { DayOfWeek: { [Op.eq]: dayOfWeek }, DishID: { [Op.eq]: getDishID.DishID } } })
+									.then(async (getMenu) => {
+										if (getMenu == null) {
+											res.status(403).send({ type: "Error", message: "Menu doesn't exists" })
+										} else {
+											await db.menu
+												.destroy({ where: { DayOfWeek: { [Op.eq]: dayOfWeek }, DishID: { [Op.eq]: getDishID.DishID } } })
+												.then(() => {
+													res.status(200).send({ type: "OK", message: "Successfully deleted" })
+												})
+												.catch((e) => {
+													res.status(403).send({ type: "Error", message: "Eror while deleting", stack: e })
+												})
+										}
+									})
+									.catch(e => {
+										console.log(e);
+										res.status(403).send({ type: "Error", message: "Error while searching" });
+									});
+							})
 					})
-					.catch(e => {
-						console.log(e);
-						res.status(403).send({ type: "Error", message: "Error while searching" });
-					});
 			}
 		});
 	} else {
@@ -136,15 +172,40 @@ exports.findAllProducts = (req, res) => {
 				console.log(err);
 				return res.status(403).send({ type: "Error", message: "Invalid token" })
 			} else {
-				await db.products
+				await db.dishes
 					.findAll()
 					.then((getProducts) => {
 						let obj = {};
 						let i = 1;
 						for (const product in getProducts) {
-							obj[i] = getProducts[product].Name;
+							obj[getProducts[product].Name] = getProducts[product].Name;
 							i++;
 						}
+						res.status(200).send({ type: "OK", message: obj })
+					})
+					.catch((e) => {
+						console.log(e);
+						return res.status(403).send({ type: "Error", message: "Error while fetching" })
+					})
+			}
+		});
+	} else {
+		return res.status(403).send({ type: "Error", message: "Authorization token required" })
+	}
+};
+
+exports.destroyAll = (req, res) => {
+	const authHeader = req.headers.authorization;
+	if (authHeader) {
+		const token = authHeader.split(" ")[1];
+		jwt.verify(token, process.env.TOKEN, async (err) => {
+			if (err) {
+				console.log(err);
+				return res.status(403).send({ type: "Error", message: "Invalid token" })
+			} else {
+				await db.dishes
+					.destroy()
+					.then((getProducts) => {
 						res.status(200).send({ type: "OK", message: obj })
 					})
 					.catch((e) => {
