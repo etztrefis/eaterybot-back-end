@@ -8,6 +8,7 @@ const codesController = require("./app/controller/codes.controller");
 const ordersController = require("./app/controller/orders.controller");
 const dishesController = require("./app/controller/dishes.controller");
 const productsConrtoller = require("./app/controller/products.controller");
+const statisticsController = require("./app/controller/statistics.controller");
 const compositionsController = require("./app/controller/compositions.controller");
 
 const app = express();
