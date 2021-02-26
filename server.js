@@ -31,6 +31,8 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/api/admins/", adminController.findAll);
+app.get("/api/admins/availiable", adminController.findAllAvailiable);
+app.get("/api/admins/delete/:username/", adminController.delete);
 app.get("/api/admins/:username/:password", adminController.findOne);
 app.get("/api/admins/create/:username/:password/:code", adminController.create);
 

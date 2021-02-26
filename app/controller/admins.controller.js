@@ -9,7 +9,6 @@ exports.create = async (req, res) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
     const token = authHeader.split(" ")[1];
-
     jwt.verify(token, process.env.TOKEN, async (err) => {
       if (err) {
         return res.status(403).send({ type: "error", message: "Authorization token required" })
@@ -93,10 +92,18 @@ exports.findOne = async (req, res) => {
         const originalResponse = responseBytes.toString(cryptoJS.enc.Utf8);
         const originalDataBase = databadeBytes.toString(cryptoJS.enc.Utf8);
 
-        if (originalResponse === originalDataBase) {
-          res.status(200).send(Math.floor(Math.random() * 16777215).toString(16));
+        if (getAdmin.isSuperAdmin == 1) {
+          if (originalResponse === originalDataBase) {
+            res.status(200).send(`${Math.floor(Math.random() * 16777215).toString(16)}1`);
+          } else {
+            return res.status(404).send({ type: "Error", message: "Tokens does not match" });
+          }
         } else {
-          return res.status(404).send({ type: "Error", message: "Tokens does not match" });
+          if (originalResponse === originalDataBase) {
+            res.status(200).send(`${Math.floor(Math.random() * 16777215).toString(16)}0`);
+          } else {
+            return res.status(404).send({ type: "Error", message: "Tokens does not match" });
+          }
         }
       }
     })
@@ -106,11 +113,49 @@ exports.findOne = async (req, res) => {
     });
 };
 
-// Update an Admin by the id in the request
-exports.update = (req, res) => { };
-
 // Delete an Admin with the specified id in the request
-exports.delete = (req, res) => { };
+exports.delete = (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.TOKEN, async (err) => {
+      if (err) {
+        return res.status(403).send({ type: "Error", message: "Authorization token required" })
+      } else {
+        await db.admins.findOne({ where: { Login: { [Op.eq]: req.pararms.username } } })
+          .then((admin) => {
+            if (admin) {
+              admin.update({
+                Password: null,
+                Availiable: false,
+              })
+              res.status(200).send({ type: "OK", message: "Successfully deleted" });
+            } else {
+              res.status(403).send({ type: "Error", message: "Error while searching" })
+            }
+          });
+      }
+    });
+  } else {
+    return res.status(403).send({ type: "Error", message: "Authorization token required" })
+  }
+};
 
 // Find all availiable Admins
-exports.findAllAvailiable = (req, res) => { };
+exports.findAllAvailiable = (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.TOKEN, async (err) => {
+      if (err) {
+        return res.status(403).send({ type: "Error", message: "Authorization token required" })
+      } else {
+        await db.admins.findAll({ where: { Availiable: { [Op.eq]: 1 } } }).then((getAdmins) => {
+          res.status(200).send(getAdmins);
+        });
+      }
+    });
+  } else {
+    return res.status(403).send({ type: "Error", message: "Authorization token required" })
+  }
+};

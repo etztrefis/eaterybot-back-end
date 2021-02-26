@@ -13,6 +13,9 @@ module.exports = (sequelize, Sequelize) => {
 			Availiable: {
 				type: Sequelize.BOOLEAN,
 			},
+			isSuperAdmin: {
+				type: Sequelize.BOOLEAN,
+			},
 		},
 		{ timestamps: false }
 	);
