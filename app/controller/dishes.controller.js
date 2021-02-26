@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
         const token = authHeader.split(" ")[1];
         jwt.verify(token, process.env.TOKEN, async (err) => {
             if (err) {
-                return res.status(403).send({ type: "error", message: "Invalid token" })
+                return res.status(403).send({ type: "Error", message: "Invalid token" })
             } else {
                 await db.dishes
                     .findAll({
@@ -85,7 +85,7 @@ exports.delete = (req, res) => {
                 await db.dishes.findOne({ where: { DishID: { [Op.eq]: dishID } } })
                     .then(async (getDish) => {
                         if (getDish == null) {
-                            res.status(403).send({ type: "Error", message: "Product doesn't exists" })
+                            res.status(403).send({ type: "Error", message: "Dish doesn't exists" })
                         } else {
                             await db.dishes
                                 .destroy({ where: { DishID: { [Op.eq]: dishID } } })
@@ -134,7 +134,7 @@ exports.update = (req, res) => {
                                 })
                                 .catch((e) => {
                                     console.log(e);
-                                    res.status(403).send({ type: "OK", message: "Error while updating" })
+                                    res.status(403).send({ type: "Error", message: "Error while updating" })
                                 })
                         } else {
                             res.status(403).send({ type: "OK", message: "Error while searching" })

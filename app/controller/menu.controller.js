@@ -3,7 +3,7 @@ const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "../../.env" });
 
-// Retrieve all dishes from the database.
+// Retrieve menu from the database.
 exports.findAll = async (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
@@ -45,7 +45,7 @@ exports.findAll = async (req, res) => {
 	}
 };
 
-// Create and Save a new dish
+// Create and Save a new row into menu table
 exports.create = async (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
@@ -85,7 +85,7 @@ exports.create = async (req, res) => {
 										})
 										.catch((e) => {
 											console.log(e);
-											return res.status(404).send({ type: "Error", message: "Error while dish creating" });
+											return res.status(404).send({ type: "Error", message: "Error while row creating" });
 										})
 								} else {
 									return res.status(404).send({ type: "Error", message: "Already exists." });
@@ -163,6 +163,7 @@ exports.delete = (req, res) => {
 	}
 };
 
+// Retrive all products from another database table for future use in menu lookup
 exports.findAllProducts = (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
@@ -194,6 +195,7 @@ exports.findAllProducts = (req, res) => {
 	}
 };
 
+// DELETE FROM Menu table
 exports.destroyAll = (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {

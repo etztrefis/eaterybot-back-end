@@ -34,7 +34,7 @@ exports.findAll = async (req, res) => {
     }
 };
 
-//Update specified order
+//Update order specified by ID
 exports.update = (req, res) => {
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -56,10 +56,10 @@ exports.update = (req, res) => {
                                 })
                                 .catch((e) => {
                                     console.log(e);
-                                    res.status(403).send({ type: "OK", message: "Error while updating" })
+                                    res.status(403).send({ type: "Error", message: "Error while updating" })
                                 })
                         } else {
-                            res.status(403).send({ type: "OK", message: "Error while searching" })
+                            res.status(403).send({ type: "Error", message: "Error while searching" })
                         }
                     });
             }
@@ -69,7 +69,7 @@ exports.update = (req, res) => {
     }
 };
 
-
+// Funcion that converts mysql datetime to readable time for database user
 function setTimeToNormal() {
     var date;
     date = new Date();

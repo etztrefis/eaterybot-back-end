@@ -54,7 +54,7 @@ exports.create = async (req, res) => {
     const token = authHeader.split(" ")[1];
     jwt.verify(token, process.env.TOKEN, async (err) => {
       if (err) {
-        return res.status(403).send({ type: "error", message: "Invalid token" })
+        return res.status(403).send({ type: "Error", message: "Invalid token" })
       } else {
         await db.products
           .findAll({

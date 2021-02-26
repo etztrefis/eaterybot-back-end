@@ -6,6 +6,7 @@ require("dotenv").config({ path: "../../.env" });
 // Idk but here im using raw sequelize queries since there is no JOINS in
 //  sequelize model querieing as i know
 
+// Retrive all compositiong with join from database
 exports.findAll = async (req, res) => {
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -23,7 +24,7 @@ exports.findAll = async (req, res) => {
                         res.status(200).send({ type: "OK", message: getProducts })
                     })
                     .catch(() => {
-                        res.status(403).send({ type: "OK", message: "Error while selecting" })
+                        res.status(403).send({ type: "Error", message: "Error while selecting" })
                     })
             }
         });
@@ -32,6 +33,7 @@ exports.findAll = async (req, res) => {
     }
 };
 
+// Create new composition and push it into database
 exports.create = async (req, res) => {
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -82,6 +84,7 @@ exports.create = async (req, res) => {
     }
 };
 
+// Delete composition from database specified by dishID and product name
 exports.delete = async (req, res) => {
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -127,6 +130,7 @@ exports.delete = async (req, res) => {
     }
 };
 
+// Update specified composition
 exports.update = (req, res) => {
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -160,7 +164,7 @@ exports.update = (req, res) => {
                                                 })
                                                 .catch((e) => {
                                                     console.log(e);
-                                                    res.status(403).send({ type: "OK", message: "Error while updating" })
+                                                    res.status(403).send({ type: "Error", message: "Error while updating" })
                                                 })
                                         })
                                         .catch((e) => {
