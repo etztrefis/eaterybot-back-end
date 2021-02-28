@@ -32,35 +32,37 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/api/admins/", adminController.findAll);
-app.get("/api/admins/availiable", adminController.findAllAvailiable);
 app.get("/api/admins/delete/:username/", adminController.delete);
 app.get("/api/admins/:username/:password", adminController.findOne);
+app.get("/api/admins/availiable", adminController.findAllAvailiable);
 app.get("/api/admins/create/:username/:password/:code", adminController.create);
+app.get("/api/admins/username/:oldusername/:newusername", adminController.updatePassword);
+app.get("/api/admins/password/:username/:oldpassword/:newpassword", adminController.updatePassword);
 
 app.get("/api/codes/:code", codesController.findAll);
 app.get("/api/codes/", codesController.findAllCodes);
 
 app.get("/api/products/", productsConrtoller.findAll);
 app.get("/api/products/less/", productsConrtoller.findAllLess);
-app.get("/api/products/create/:name/:amount/:units", productsConrtoller.create);
 app.get("/api/products/delete/:id", productsConrtoller.delete);
+app.get("/api/products/create/:name/:amount/:units", productsConrtoller.create);
 app.get("/api/products/update/:id/:name/:amount/:units", productsConrtoller.update);
 
 app.get("/api/dishes/", dishesController.findAll);
-app.get("/api/dishes/create/:id/:name/:energy/:price", dishesController.create);
 app.get("/api/dishes/delete/:id", dishesController.delete);
+app.get("/api/dishes/create/:id/:name/:energy/:price", dishesController.create);
 app.get("/api/dishes/update/:id/:name/:energy/:price", dishesController.update);
 
 app.get("/api/compositions/", compositionsController.findAll);
-app.get("/api/compositions/create/:did/:pname/:amount/", compositionsController.create);
 app.get("/api/compositions/delete/:did/:pname", compositionsController.delete);
+app.get("/api/compositions/create/:did/:pname/:amount/", compositionsController.create);
 app.get("/api/compositions/update/:did/:pname/:amount/", compositionsController.update);
 
 app.get("/api/menu/", menuController.findAll);
 app.get("/api/menu/destroy", menuController.destroyAll);
-app.get("/api/menu/create/:dayofweek/:dishid/", menuController.create);
-app.get("/api/menu/delete/:dayofweek/:dishid", menuController.delete);
 app.get("/api/menu/dishes", menuController.findAllProducts)
+app.get("/api/menu/delete/:dayofweek/:dishid", menuController.delete);
+app.get("/api/menu/create/:dayofweek/:dishid/", menuController.create);
 
 app.get("/api/orders/", ordersController.findAll);
 app.get("/api/orders/update/:id/:state", ordersController.update);
