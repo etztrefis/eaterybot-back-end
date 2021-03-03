@@ -33,14 +33,14 @@ exports.create = async (req, res) => {
                   return res.status(200).send({ type: "OK", message: "Successfully created" });
                 })
                 .catch(() => {
-                  return res.status(404).send({ type: "Error", message: "Error while admin creating" });
+                  return res.status(403).send({ type: "Error", message: "Error while admin creating" });
                 });
             } else {
-              return res.status(404).send({ message: "Already exists." });
+              return res.status(403).send({ message: "Already exists." });
             }
           })
           .catch(() => {
-            return res.status(404).send({ type: "Error", message: "Error while admin searching" });
+            return res.status(403).send({ type: "Error", message: "Error while admin searching" });
           });
       }
     });
@@ -85,7 +85,7 @@ exports.findOne = async (req, res) => {
           })
           .then((getAdmin) => {
             if (getAdmin == null) {
-              return res.status(404).send({ type: "Error", message: "Admin doesn't exists" });
+              return res.status(403).send({ type: "Error", message: "Admin doesn't exists" });
             } else {
               const responseBytes = cryptoJS.AES.decrypt(
                 req.params.password,
@@ -103,20 +103,20 @@ exports.findOne = async (req, res) => {
                 if (originalResponse === originalDataBase) {
                   res.status(200).send(`${Math.floor(Math.random() * 16777215).toString(16)} ${getAdmin["Login"]}1`);
                 } else {
-                  return res.status(404).send({ type: "Error", message: "Tokens does not match" });
+                  return res.status(403).send({ type: "Error", message: "Tokens does not match" });
                 }
               } else {
                 if (originalResponse === originalDataBase) {
                   res.status(200).send(`${Math.floor(Math.random() * 16777215).toString(16)} ${getAdmin["Login"]}0`);
                 } else {
-                  return res.status(404).send({ type: "Error", message: "Tokens does not match" });
+                  return res.status(403).send({ type: "Error", message: "Tokens does not match" });
                 }
               }
             }
           })
           .catch((e) => {
             console.log(e);
-            return res.status(404).send({ type: "Error", message: "Admin doesn't exists" });
+            return res.status(403).send({ type: "Error", message: "Admin doesn't exists" });
           });
       }
     });
@@ -134,7 +134,7 @@ exports.delete = (req, res) => {
       if (err) {
         return res.status(403).send({ type: "Error", message: "Authorization token required" })
       } else {
-        await db.admins.findOne({ where: { Login: { [Op.eq]: req.pararms.username } } })
+        await db.admins.findOne({ where: { Login: { [Op.eq]: req.params.username } } })
           .then((admin) => {
             if (admin) {
               admin.update({
@@ -190,7 +190,7 @@ exports.updatePassword = (req, res) => {
           })
           .then((getAdmin) => {
             if (getAdmin == null) {
-              return res.status(404).send({ type: "Error", message: "Admin doesn't exists" });
+              return res.status(403).send({ type: "Error", message: "Admin doesn't exists" });
             } else {
               const responseBytes = cryptoJS.AES.decrypt(
                 req.params.oldpassword,
@@ -203,8 +203,8 @@ exports.updatePassword = (req, res) => {
 
               const originalResponse = responseBytes.toString(cryptoJS.enc.Utf8);
               const originalDataBase = databadeBytes.toString(cryptoJS.enc.Utf8);
-
-              if (originalResponse === originalDataBase) {
+              console.log(`${originalResponse} === ${originalDataBase}`)
+              if (originalResponse == originalDataBase && originalResponse != "") {
                 getAdmin.update({
                   Password: req.params.newpassword
                 })
@@ -212,16 +212,16 @@ exports.updatePassword = (req, res) => {
                     res.status(200).send({ type: "OK", message: "Successfully updated" })
                   })
                   .catch(() => {
-                    return res.status(404).send({ type: "Error", message: "Error while updating" });
+                    return res.status(403).send({ type: "Error", message: "Error while updating" });
                   })
               } else {
-                return res.status(404).send({ type: "Error", message: "Tokens does not match" });
+                return res.status(403).send({ type: "Error", message: "Tokens does not match" });
               }
             }
           })
           .catch((e) => {
             console.log(e);
-            return res.status(404).send({ type: "Error", message: "Admin doesn't exists" });
+            return res.status(403).send({ type: "Error", message: "Admin doesn't exists" });
           });
       }
     });
@@ -231,7 +231,7 @@ exports.updatePassword = (req, res) => {
 };
 
 // Update username by current username
-exports.updatePassword = (req, res) => {
+exports.updateUsername = (req, res) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
     const token = authHeader.split(" ")[1];
@@ -248,7 +248,7 @@ exports.updatePassword = (req, res) => {
           })
           .then((getAdmin) => {
             if (getAdmin == null) {
-              return res.status(404).send({ type: "Error", message: "Admin doesn't exists" });
+              return res.status(403).send({ type: "Error", message: "Admin doesn't exists" });
             } else {
               getAdmin.update({
                 Login: req.params.newusername
@@ -257,13 +257,13 @@ exports.updatePassword = (req, res) => {
                   res.status(200).send({ type: "OK", message: "Successfully updated" })
                 })
                 .catch(() => {
-                  return res.status(404).send({ type: "Error", message: "Error while updating" });
+                  return res.status(403).send({ type: "Error", message: "Error while updating" });
                 })
             }
           })
           .catch((e) => {
             console.log(e);
-            return res.status(404).send({ type: "Error", message: "Admin doesn't exists" });
+            return res.status(403).send({ type: "Error", message: "Admin doesn't exists" });
           });
       }
     });

@@ -36,7 +36,7 @@ app.get("/api/admins/delete/:username/", adminController.delete);
 app.get("/api/admins/:username/:password", adminController.findOne);
 app.get("/api/admins/availiable", adminController.findAllAvailiable);
 app.get("/api/admins/create/:username/:password/:code", adminController.create);
-app.get("/api/admins/username/:oldusername/:newusername", adminController.updatePassword);
+app.get("/api/admins/username/:oldusername/:newusername", adminController.updateUsername);
 app.get("/api/admins/password/:username/:oldpassword/:newpassword", adminController.updatePassword);
 
 app.get("/api/codes/:code", codesController.findAll);
