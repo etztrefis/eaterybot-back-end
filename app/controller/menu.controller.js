@@ -81,7 +81,12 @@ exports.create = async (req, res) => {
 											DishID: getDish.DishID
 										})
 										.then(() => {
-											return res.status(200).send({ type: "OK", message: "Successfully created" });
+											res.status(200).send({ type: "OK", message: "Successfully created" });
+											db.logs.create({
+												Action: "CREATE",
+												Table: "Menu",
+												Login: req.params.sender
+											  })
 										})
 										.catch((e) => {
 											console.log(e);
@@ -144,6 +149,11 @@ exports.delete = (req, res) => {
 												.destroy({ where: { DayOfWeek: { [Op.eq]: dayOfWeek }, DishID: { [Op.eq]: getDishID.DishID } } })
 												.then(() => {
 													res.status(200).send({ type: "OK", message: "Successfully deleted" })
+													db.logs.create({
+														Action: "DELETE",
+														Table: "Menu",
+														Login: req.params.sender
+													  })
 												})
 												.catch((e) => {
 													res.status(403).send({ type: "Error", message: "Eror while deleting", stack: e })
@@ -209,6 +219,11 @@ exports.destroyAll = (req, res) => {
 					.destroy()
 					.then((getProducts) => {
 						res.status(200).send({ type: "OK", message: obj })
+						db.logs.create({
+							Action: "DELETE ALL",
+							Table: "Menu",
+							Login: req.params.sender
+						  })
 					})
 					.catch((e) => {
 						console.log(e);

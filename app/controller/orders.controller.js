@@ -25,7 +25,7 @@ exports.findAll = async (req, res) => {
                         res.status(200).send({ type: "OK", message: getOrders[0] })
                     })
                     .catch(() => {
-                        res.status(403).send({ type: "OK", message: "Error while selecting" })
+                        res.status(403).send({ type: "Error", message: "Error while selecting" })
                     })
             }
         });
@@ -53,6 +53,11 @@ exports.update = (req, res) => {
                             })
                                 .then(() => {
                                     res.status(200).send({ type: "OK", message: "Successfully updated" })
+                                    db.logs.create({
+                                        Action: "UPDATE",
+                                        Table: "Orders",
+                                        Login: req.params.sender
+                                      })
                                 })
                                 .catch((e) => {
                                     console.log(e);

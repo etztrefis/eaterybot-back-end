@@ -141,7 +141,14 @@ exports.delete = (req, res) => {
                 Password: null,
                 Availiable: false,
               })
-              res.status(200).send({ type: "OK", message: "Successfully deleted" });
+                .then(() => {
+                  res.status(200).send({ type: "OK", message: "Successfully deleted" });
+                  db.logs.create({
+                    Action: "DELETE",
+                    Table: "Admin",
+                    Login: req.params.sender
+                  })
+                })
             } else {
               res.status(403).send({ type: "Error", message: "Error while searching" })
             }

@@ -69,7 +69,12 @@ exports.create = async (req, res) => {
                   MeasurmentUnits: req.params.units,
                 })
                 .then(() => {
-                  return res.status(200).send({ type: "OK", message: "Successfully created" });
+                  res.status(200).send({ type: "OK", message: "Successfully created" });
+                  db.logs.create({
+                    Action: "CREATE",
+                    Table: "Products",
+                    Login: req.params.sender
+                  })
                 })
                 .catch((e) => {
                   console.log(e);
@@ -110,6 +115,11 @@ exports.delete = (req, res) => {
                 .destroy({ where: { ProductID: { [Op.eq]: respID } } })
                 .then(() => {
                   res.status(200).send({ type: "OK", message: "Successfully deleted" })
+                  db.logs.create({
+                    Action: "DELETE",
+                    Table: "Products",
+                    Login: req.params.sender
+                  })
                 })
                 .catch((e) => {
                   res.status(404).send({ type: "Error", message: "Eror while deleting", stack: e })
@@ -144,6 +154,11 @@ exports.update = (req, res) => {
               })
                 .then(() => {
                   res.status(200).send({ type: "OK", message: "Successfully updated" })
+                  db.logs.create({
+                    Action: "UPDATE",
+                    Table: "Products",
+                    Login: req.params.sender
+                  })
                 })
                 .catch((e) => {
                   console.log(e);

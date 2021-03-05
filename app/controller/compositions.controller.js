@@ -60,7 +60,12 @@ exports.create = async (req, res) => {
                                             AmountProduct: amount,
                                         })
                                         .then(() => {
-                                            return res.status(200).send({ type: "OK", message: "Successfully created" });
+                                            res.status(200).send({ type: "OK", message: "Successfully created" });
+                                            db.logs.create({
+                                                Action: "DELETE",
+                                                Table: "Compositions",
+                                                Login: req.params.sender
+                                              })
                                         })
                                         .catch((e) => {
                                             console.log(e);
@@ -109,6 +114,11 @@ exports.delete = async (req, res) => {
                                         .destroy({ where: { DishID: { [Op.eq]: dishID }, ProductID: { [Op.eq]: data[0][0].ProductID } } })
                                         .then(() => {
                                             res.status(200).send({ type: "OK", message: "Successfully deleted" })
+                                            db.logs.create({
+                                                Action: "DELETE",
+                                                Table: "Compositions",
+                                                Login: req.params.sender
+                                              })
                                         })
                                         .catch((e) => {
                                             console.log(e);
@@ -161,6 +171,11 @@ exports.update = (req, res) => {
                                             })
                                                 .then(() => {
                                                     res.status(200).send({ type: "OK", message: "Successfully updated" })
+                                                    db.logs.create({
+                                                        Action: "UPDATE",
+                                                        Table: "Compositions",
+                                                        Login: req.params.sender
+                                                      })
                                                 })
                                                 .catch((e) => {
                                                     console.log(e);

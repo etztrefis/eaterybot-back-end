@@ -50,7 +50,12 @@ exports.create = async (req, res) => {
                                     Price: price,
                                 })
                                 .then(() => {
-                                    return res.status(200).send({ type: "OK", message: "Successfully created" });
+                                    res.status(200).send({ type: "OK", message: "Successfully created" });
+                                    db.logs.create({
+                                        Action: "CREATE",
+                                        Table: "Dishes",
+                                        Login: req.params.sender
+                                      })
                                 })
                                 .catch((e) => {
                                     console.log(e);
@@ -91,6 +96,11 @@ exports.delete = (req, res) => {
                                 .destroy({ where: { DishID: { [Op.eq]: dishID } } })
                                 .then(() => {
                                     res.status(200).send({ type: "OK", message: "Successfully deleted" })
+                                    db.logs.create({
+                                        Action: "DELETE",
+                                        Table: "Dishes",
+                                        Login: req.params.sender
+                                      })
                                 })
                                 .catch((e) => {
                                     res.status(404).send({ type: "Error", message: "Eror while deleting", stack: e })
@@ -131,6 +141,11 @@ exports.update = (req, res) => {
                             })
                                 .then(() => {
                                     res.status(200).send({ type: "OK", message: "Successfully updated" })
+                                    db.logs.create({
+                                        Action: "UPDATE",
+                                        Table: "Dishes",
+                                        Login: req.params.sender
+                                      })
                                 })
                                 .catch((e) => {
                                     console.log(e);
