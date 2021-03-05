@@ -33,4 +33,6 @@ db.menu = require("./menu.model")(sequelize, Sequelize);
 
 db.orders = require("./orders.model")(sequelize, Sequelize);
 
+db.logs = require("./logs.model")(sequelize, Sequelize);
+
 module.exports = db;
