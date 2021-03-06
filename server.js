@@ -3,8 +3,9 @@ const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
 const menuController = require("./app/controller/menu.controller");
-const adminController = require("./app/controller/admins.controller");
+const logsController = require("./app/controller/logs.controller");
 const codesController = require("./app/controller/codes.controller");
+const adminController = require("./app/controller/admins.controller");
 const ordersController = require("./app/controller/orders.controller");
 const dishesController = require("./app/controller/dishes.controller");
 const productsConrtoller = require("./app/controller/products.controller");
@@ -70,6 +71,9 @@ app.get("/api/orders/update/:id/:state/:sender", ordersController.update);
 app.get("/api/stats/dishes/", statisticsController.getDishesStats);
 app.get("/api/stats/messages/", statisticsController.getUsersMessagesStats); 
 app.get("/api/stats/menu/", statisticsController.getMenuDishesStats);
+app.get("/api/stats/admins/", statisticsController.getAdminActions);
+
+app.get("/api/logs/", logsController.findAll);
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {
