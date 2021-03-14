@@ -235,3 +235,33 @@ exports.destroyAll = (req, res) => {
 		return res.status(403).send({ type: "Error", message: "Authorization token required" })
 	}
 };
+
+// Retrive menu by day of week
+
+exports.findByDay = async (req, res) => {
+	const authHeader = req.headers.authorization;
+	if (authHeader) {
+		const token = authHeader.split(" ")[1];
+		jwt.verify(token, process.env.TOKEN, async (err) => {
+			if (err) {
+				console.log(err);
+				return res.status(403).send({ type: "Error", message: "Invalid token" })
+			} else {
+				await db.sequelize.query
+					(`SELECT Dishes.Name, Dishes.EnergyValue 
+					FROM Menu
+					INNER JOIN Dishes ON Dishes.DishID = Menu.DishID
+				 	WHERE Menu.DayOfWeek = ${req.params.day}`)
+					.then((getMenu) => {
+						res.status(200).send({ type: "OK", message: getMenu[0] })
+					})
+					.catch((e) => {
+						console.log(e);
+						res.status(403).send({ type: "OK", message: "Error while selecting" })
+					})
+			}
+		});
+	} else {
+		return res.status(403).send({ type: "Error", message: "Authorization token required" })
+	}
+};
