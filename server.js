@@ -60,7 +60,7 @@ app.get("/api/compositions/create/:did/:pname/:amount/:sender", compositionsCont
 app.get("/api/compositions/update/:did/:pname/:amount/:sender", compositionsController.update);
 
 app.get("/api/menu/", menuController.findAll);
-app.get("/api/menu/:day", menuController.findByDay);
+app.get("/api/menu/day/:day", menuController.findByDay);
 app.get("/api/menu/destroy/:sender", menuController.destroyAll);
 app.get("/api/menu/dishes", menuController.findAllProducts)
 app.get("/api/menu/delete/:dayofweek/:dishid/:sender", menuController.delete);

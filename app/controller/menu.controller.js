@@ -36,7 +36,7 @@ exports.findAll = async (req, res) => {
 					})
 					.catch((e) => {
 						console.log(e);
-						res.status(403).send({ type: "OK", message: "Error while selecting" })
+						res.status(403).send({ type: "Error", message: "Error while selecting" })
 					})
 			}
 		});
@@ -248,7 +248,7 @@ exports.findByDay = async (req, res) => {
 				return res.status(403).send({ type: "Error", message: "Invalid token" })
 			} else {
 				await db.sequelize.query
-					(`SELECT Dishes.Name, Dishes.EnergyValue 
+					(`SELECT Dishes.Name, Dishes.EnergyValue, Dishes.Price
 					FROM Menu
 					INNER JOIN Dishes ON Dishes.DishID = Menu.DishID
 				 	WHERE Menu.DayOfWeek = ${req.params.day}`)
@@ -257,7 +257,7 @@ exports.findByDay = async (req, res) => {
 					})
 					.catch((e) => {
 						console.log(e);
-						res.status(403).send({ type: "OK", message: "Error while selecting" })
+						res.status(403).send({ type: "Error", message: "Error while selecting" })
 					})
 			}
 		});
