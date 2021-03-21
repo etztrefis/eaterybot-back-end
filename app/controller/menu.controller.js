@@ -237,7 +237,6 @@ exports.destroyAll = (req, res) => {
 };
 
 // Retrive menu by day of week
-
 exports.findByDay = async (req, res) => {
 	const authHeader = req.headers.authorization;
 	if (authHeader) {
@@ -253,7 +252,11 @@ exports.findByDay = async (req, res) => {
 					INNER JOIN Dishes ON Dishes.DishID = Menu.DishID
 				 	WHERE Menu.DayOfWeek = ${req.params.day}`)
 					.then((getMenu) => {
-						res.status(200).send({ type: "OK", message: getMenu[0] })
+						if(getMenu.toString() == ","){
+							res.status(403).send({ type: "Error", message: 'No menu for specified day.' })
+						}else{
+							res.status(200).send({ type: "OK", message: getMenu[0] })
+						}
 					})
 					.catch((e) => {
 						console.log(e);
