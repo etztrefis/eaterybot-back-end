@@ -45,6 +45,7 @@ app.get("/api/codes/", codesController.findAllCodes);
 
 app.get("/api/products/", productsConrtoller.findAll);
 app.get("/api/products/less/", productsConrtoller.findAllLess);
+app.get("/api/products/lookup/", productsConrtoller.findAllProducts);
 app.get("/api/products/delete/:id/:sender", productsConrtoller.delete);
 app.get("/api/products/create/:name/:amount/:units/:sender", productsConrtoller.create);
 app.get("/api/products/update/:id/:name/:amount/:units/:sender", productsConrtoller.update);

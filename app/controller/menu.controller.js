@@ -215,10 +215,10 @@ exports.destroyAll = (req, res) => {
 				console.log(err);
 				return res.status(403).send({ type: "Error", message: "Invalid token" })
 			} else {
-				await db.dishes
-					.destroy()
-					.then((getProducts) => {
-						res.status(200).send({ type: "OK", message: obj })
+				await db.menu
+					.destroy({where: {}})
+					.then(() => {
+						res.status(200).send({ type: "OK", message: "Deleted" })
 						db.logs.create({
 							Action: "DELETE ALL",
 							Table: "Menu",

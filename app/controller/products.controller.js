@@ -174,3 +174,35 @@ exports.update = (req, res) => {
     return res.status(403).send({ type: "Error", message: "Authorization token required" })
   }
 };
+
+// Retrive all products from another database table for future use in menu lookup
+exports.findAllProducts = (req, res) => {
+	const authHeader = req.headers.authorization;
+	if (authHeader) {
+		const token = authHeader.split(" ")[1];
+		jwt.verify(token, process.env.TOKEN, async (err) => {
+			if (err) {
+				console.log(err);
+				return res.status(403).send({ type: "Error", message: "Invalid token" })
+			} else {
+				await db.products
+					.findAll()
+					.then((getProducts) => {
+						let obj = {};
+						let i = 1;
+						for (const product in getProducts) {
+							obj[getProducts[product].Name] = getProducts[product].Name;
+							i++;
+						}
+						res.status(200).send({ type: "OK", message: obj })
+					})
+					.catch((e) => {
+						console.log(e);
+						return res.status(403).send({ type: "Error", message: "Error while fetching" })
+					})
+			}
+		});
+	} else {
+		return res.status(403).send({ type: "Error", message: "Authorization token required" })
+	}
+};
