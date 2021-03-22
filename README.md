@@ -1,4 +1,4 @@
-# REST API for [eatrybot.trefis.net](@etztrefis/eaterybot.trefis.net.git)
+# REST API for [eatrybot.trefis.net](https://github.com/etztrefis/eaterybot.trefis.net)
 
 This is a documentation of a EateryBot application providing a REST
 API to a DataMapper-backed model.
