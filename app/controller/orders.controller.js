@@ -1,6 +1,7 @@
 const db = require("../models");
 const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
+const VKBot = require("node-vk-bot-api");
 require("dotenv").config({ path: "../../.env" });
 
 // Retrieve all orders from the database.
@@ -17,9 +18,10 @@ exports.findAll = async (req, res) => {
                     (`SELECT Orders_Logs.ID, Users.FirstName, Users.LastName, Dishes.Name, Orders_Logs.Date, Orders_Logs.State
                     FROM Orders_Logs
                     INNER JOIN Users ON Orders_Logs.UserID = Users.UID
-                    INNER JOIN Dishes ON Orders_Logs.DishID = Dishes.DishID`)
+                    INNER JOIN Dishes ON Orders_Logs.DishID = Dishes.DishID
+                    WHERE `)
                     .then((getOrders) => {
-                        for(const order in getOrders[0]){
+                        for (const order in getOrders[0]) {
                             getOrders[0][order].Date = setTimeToNormal(getOrders[0][order].Date);
                         }
                         res.status(200).send({ type: "OK", message: getOrders[0] })
@@ -46,7 +48,7 @@ exports.update = (req, res) => {
             } else {
                 let id = parseInt(req.params.id, 10);
                 await db.orders.findOne({ where: { ID: { [Op.eq]: id } } })
-                    .then((project) => {
+                    .then(async (project) => {
                         if (project) {
                             project.update({
                                 State: req.params.state
@@ -57,12 +59,35 @@ exports.update = (req, res) => {
                                         Action: "UPDATE",
                                         Table: "Orders",
                                         Login: req.params.sender
-                                      })
+                                    })
                                 })
                                 .catch((e) => {
                                     console.log(e);
                                     res.status(403).send({ type: "Error", message: "Error while updating" })
                                 })
+
+                            let now = new Date(),
+                                mday = now.getDate();
+                            const bot = new VKBot({
+                                token: process.env.BOTTOKEN,
+                                group_id: process.env.GROUP_ID,
+                                secret: process.env.SECRET,
+                                confirmation: process.env.CONFIRMATION,
+                            });
+
+                            await db.sequelize.query(`SELECT State, Dishes.Name
+                                    FROM Orders_Logs
+                                    INNER JOIN Dishes ON Orders_Logs.ID = Dishes.DishID
+                                    WHERE Orders_Logs.UserID = "${project.dataValues.UserID}" AND DAY(DATE) = ${mday}`)
+                                .then(async (data) => {
+                                    if (data.toString() !== ",") {
+                                        let message = "\n";
+                                        for (let i = 0; i < data.length; i++) {
+                                            message += `${data[i].Name} : ${data[i].State} \n`
+                                        }
+                                        await bot.sendMessage(project.dataValues.UserID, `🍔 Статус вашего обновился: ${message}`);
+                                    }
+                                });
                         } else {
                             res.status(403).send({ type: "Error", message: "Error while searching" })
                         }
