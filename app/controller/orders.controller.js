@@ -77,13 +77,14 @@ exports.update = (req, res) => {
 
                             await db.sequelize.query(`SELECT State, Dishes.Name
                                     FROM Orders_Logs
-                                    INNER JOIN Dishes ON Orders_Logs.ID = Dishes.DishID
-                                    WHERE Orders_Logs.UserID = "${project.dataValues.UserID}" AND DAY(DATE) = ${mday}`)
+                                    INNER JOIN Dishes ON Orders_Logs.DishID = Dishes.DishID
+                                    WHERE Orders_Logs.UserID = "${project.dataValues.UserID}" AND DAY(DATE) = ${mday - 1}`)
                                 .then(async (data) => {
+                                    console.log(data[0]);
                                     if (data.toString() !== ",") {
                                         let message = "\n";
-                                        for (let i = 0; i < data.length; i++) {
-                                            message += `${data[i].Name} : ${data[i].State} \n`
+                                        for (let i = 0; i < data[0].length; i++) {
+                                            message += `${data[0][i].Name} : ${data[0][i].State} \n`
                                         }
                                         await bot.sendMessage(project.dataValues.UserID, `🍔 Статус вашего обновился: ${message}`);
                                     }
