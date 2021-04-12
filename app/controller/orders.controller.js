@@ -19,7 +19,7 @@ exports.findAll = async (req, res) => {
                     FROM Orders_Logs
                     INNER JOIN Users ON Orders_Logs.UserID = Users.UID
                     INNER JOIN Dishes ON Orders_Logs.DishID = Dishes.DishID
-                    WHERE `)
+                    WHERE Orders_Logs.State = "Заказан"`)
                     .then((getOrders) => {
                         for (const order in getOrders[0]) {
                             getOrders[0][order].Date = setTimeToNormal(getOrders[0][order].Date);
