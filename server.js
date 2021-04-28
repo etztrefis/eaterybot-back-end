@@ -9,6 +9,7 @@ const adminController = require("./app/controller/admins.controller");
 const ordersController = require("./app/controller/orders.controller");
 const dishesController = require("./app/controller/dishes.controller");
 const productsConrtoller = require("./app/controller/products.controller");
+const messagesController = require("./app/controller/messages.controller");
 const statisticsController = require("./app/controller/statistics.controller");
 const compositionsController = require("./app/controller/compositions.controller");
 
@@ -76,6 +77,8 @@ app.get("/api/stats/menu/", statisticsController.getMenuDishesStats);
 app.get("/api/stats/admins/", statisticsController.getAdminActions);
 
 app.get("/api/logs/", logsController.findAll);
+
+app.get("/api/message/:name/:email/:message", messagesController.messageSend)
 
 const db = require("./app/models");
 db.sequelize.sync().then(() => {

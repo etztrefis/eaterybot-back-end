@@ -36,7 +36,7 @@ exports.create = async (req, res) => {
                   return res.status(403).send({ type: "Error", message: "Error while admin creating" });
                 });
             } else {
-              return res.status(403).send({ message: "Already exists." });
+              return res.status(200).send({ message: "Already exists." });
             }
           })
           .catch(() => {
